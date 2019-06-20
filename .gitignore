@@ -1,0 +1,9 @@
+
+# Compiler Output
+*.o
+
+# Executable Files
+gv
+
+# VS Code
+/.vscode/
