@@ -7,6 +7,11 @@
 
 namespace Options = boost::program_options;
 
+enum class PrintFormat {
+    Canonical, // (x,y)
+    Bare       // x y
+};
+
 class Point
 {
     int x;
@@ -37,11 +42,15 @@ public:
         y += y_offset;
     }
 
-    std::string str() const noexcept
+    std::string str(PrintFormat format = PrintFormat::Canonical) const noexcept
     {
         std::ostringstream oss;
 
-        oss << "(" << x << "," << y << ")";
+        if (format == PrintFormat::Canonical) {
+            oss << "(" << x << "," << y << ")";
+        } else if (format == PrintFormat::Bare) {
+            oss << x << " " << y;
+        }
 
         return oss.str();
     }
@@ -110,7 +119,8 @@ int main(int argc, const char *argv[])
     Point p;
     
     // Display initial location
-    p.print();
+    // p.print();
+    std::cout << p.str(PrintFormat::Bare) << "\n";
 
     // Run the simulation
     for (size_t i = 0; i < iterations; ++i) {
@@ -118,7 +128,8 @@ int main(int argc, const char *argv[])
         p.move(dist(gen), dist(gen));
 
         // Print the new point value.
-        p.print();
+        // p.print();
+        std::cout << p.str(PrintFormat::Bare) << "\n";
     }
 
     return EXIT_SUCCESS;
