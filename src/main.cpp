@@ -5,6 +5,17 @@
 #define DEFAULT_SIMULATION_ITERATIONS 10
 #endif // DEFAULT_SIMULATION_ITERATIONS
 
+namespace IO
+{
+    // Don't flush the output buffer when printing a newline character
+    template <typename T, typename CharT = std::char_traits<T>>
+    std::basic_ostream<T, CharT>&
+    EndLine(std::basic_ostream<T, CharT>& outputStream)
+    {
+        return outputStream << outputStream.widen('\n');
+    }
+} // namespace IO
+
 namespace Options = boost::program_options;
 
 enum class PrintFormat {
@@ -115,21 +126,25 @@ int main(int argc, const char *argv[])
     std::mt19937_64 gen(entropy());
     std::uniform_int_distribution dist(-1, 1);
 
-    // Initialize location
-    Point p;
+    // Initialize location at the origin
+    Point p(0, 0);
     
     // Display initial location
     // p.print();
-    std::cout << p.str(PrintFormat::Bare) << "\n";
+    std::cout << p.str(PrintFormat::Bare) << IO::EndLine;
 
     // Run the simulation
     for (size_t i = 0; i < iterations; ++i) {
+        // Generate next random movement
+        const int x1 = dist(gen);
+        const int y1 = dist(gen);
+
         // Simulate movement
-        p.move(dist(gen), dist(gen));
+        p.move(x1, y1);
 
         // Print the new point value.
         // p.print();
-        std::cout << p.str(PrintFormat::Bare) << "\n";
+        std::cout << p.str(PrintFormat::Bare) << IO::EndLine;
     }
 
     return EXIT_SUCCESS;
